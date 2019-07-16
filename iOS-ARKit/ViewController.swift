@@ -58,6 +58,32 @@ class ViewController: UIViewController, ARSCNViewDelegate {
     }
 */
     
+    override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
+        let touchPoint = touches.first
+        
+        let allObjectsInARWorld = sceneView.hitTest((touchPoint?.location(in: sceneView))!, types: [ARHitTestResult.ResultType.featurePoint])
+        
+        let lastObjectInARWorld = allObjectsInARWorld.last
+        
+        let transformLastObjectInARWorld = lastObjectInARWorld?.worldTransform
+        
+        let Point3D = SCNVector3(
+            transformLastObjectInARWorld![3][0],
+            transformLastObjectInARWorld![3][1],
+            transformLastObjectInARWorld![3][2]
+        )
+        
+        addSphere(Point3D)
+    }
+    
+    func addSphere(_ point: SCNVector3) {
+        let sphere = SCNSphere(radius: 0.01)
+        let sphereNode = SCNNode(geometry: sphere)
+        sphereNode.position = point
+        
+        self.sceneView.scene.rootNode.addChildNode(sphereNode)
+    }
+    
     func session(_ session: ARSession, didFailWithError error: Error) {
         // Present an error message to the user
         
